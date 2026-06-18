@@ -25,7 +25,19 @@ final readonly class Day
 
     public function plusDays(Interval $interval): self
     {
-        $date = (new DateTimeImmutable($this->value))->modify('+' . $interval->days . ' days');
+        return $this->plusDaysCount($interval->days);
+    }
+
+    public function plusDaysCount(int $days): self
+    {
+        $date = (new DateTimeImmutable($this->value))->modify('+' . $days . ' days');
+
+        return new self($date->format('Y-m-d'));
+    }
+
+    public function minusDaysCount(int $days): self
+    {
+        $date = (new DateTimeImmutable($this->value))->modify('-' . $days . ' days');
 
         return new self($date->format('Y-m-d'));
     }
