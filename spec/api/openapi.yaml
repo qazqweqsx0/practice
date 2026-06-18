@@ -25,13 +25,18 @@ paths:
   /notes:
     get:
       tags: [notes]
-      summary: List notes, optionally filtered by tag
+      summary: List notes, optionally filtered by tag and/or search query
       parameters:
         - name: tag
           in: query
           required: false
           schema: { type: string }
           description: Return only notes carrying this tag.
+        - name: q
+          in: query
+          required: false
+          schema: { type: string }
+          description: Case-insensitive match in note title or any tag.
       responses:
         "200":
           description: List of notes

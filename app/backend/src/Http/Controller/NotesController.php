@@ -29,7 +29,10 @@ final readonly class NotesController
         $tagParam = $request->getQueryParams()['tag'] ?? null;
         $tag = is_string($tagParam) && $tagParam !== '' ? Tag::fromString($tagParam) : null;
 
-        return Json::write($response, array_map($this->serializer->serialize(...), $this->notes->all($tag)));
+        $qParam = $request->getQueryParams()['q'] ?? null;
+        $titleQuery = is_string($qParam) ? $qParam : null;
+
+        return Json::write($response, array_map($this->serializer->serialize(...), $this->notes->all($tag, $titleQuery)));
     }
 
     /** @param array<array-key, mixed> $args */

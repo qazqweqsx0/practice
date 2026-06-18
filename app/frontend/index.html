@@ -11,34 +11,75 @@
 
       <p id="status" role="status" aria-live="polite"></p>
 
-      <section id="stats" aria-label="Статистика">
-        <span data-stat="due_today">сегодня: …</span>
-        <span data-stat="due_week">за неделю: …</span>
-        <span data-stat="streak">серия: …</span>
+      <section id="stats" aria-label="Статистика повторений">
+        <div class="stat">
+          <span class="stat-label">К повторению сегодня</span>
+          <span class="stat-value" data-stat="due_today">…</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">На ближайшие 7 дней</span>
+          <span class="stat-value" data-stat="due_week">…</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Серия дней с повторениями</span>
+          <span class="stat-value" data-stat="streak">…</span>
+        </div>
       </section>
 
       <section aria-label="Заметки">
-        <h2>Заметки</h2>
-        <form id="note-form">
-          <input
-            name="title"
-            placeholder="Заголовок"
-            aria-label="Заголовок заметки"
-            required
-          />
-          <input
-            name="tags"
-            placeholder="теги через запятую"
-            aria-label="Теги через запятую"
-          />
-          <textarea
-            name="body"
-            placeholder="Текст заметки"
-            aria-label="Текст заметки"
-          ></textarea>
-          <button type="submit">Добавить заметку</button>
-        </form>
-        <ul id="note-list"></ul>
+        <div class="section-head">
+          <h2>Заметки</h2>
+          <button type="button" id="notes-toggle" data-testid="notes-toggle">
+            Скрыть
+          </button>
+        </div>
+        <div id="notes-panel">
+          <form id="note-form">
+            <input
+              name="title"
+              placeholder="Заголовок"
+              aria-label="Заголовок заметки"
+              required
+            />
+            <input
+              name="tags"
+              placeholder="теги через запятую"
+              aria-label="Теги через запятую"
+            />
+            <textarea
+              name="body"
+              placeholder="Текст заметки"
+              aria-label="Текст заметки"
+            ></textarea>
+            <div class="form-actions">
+              <button type="submit" data-testid="note-submit">
+                Добавить заметку
+              </button>
+              <button
+                type="button"
+                id="note-cancel"
+                hidden
+                data-testid="note-cancel"
+              >
+                Отмена
+              </button>
+            </div>
+          </form>
+          <div
+            id="note-search"
+            class="note-search"
+            aria-label="Поиск по заметкам"
+          >
+            <input
+              name="q"
+              placeholder="Поиск по названию или тегу"
+              aria-label="Поиск по названию или тегу"
+              data-testid="note-search-q"
+            />
+            <button type="button" id="note-search-reset">Сбросить</button>
+          </div>
+          <ul id="note-list"></ul>
+        </div>
       </section>
 
       <section aria-label="Повторение">
