@@ -78,13 +78,31 @@ async function http<T = unknown>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  listNotes: (tag?: string) =>
-    http<Note[]>(`/notes${tag ? `?tag=${encodeURIComponent(tag)}` : ""}`),
+  listNotes: (filters?: { tag?: string; q?: string }) => {
+    const params = new URLSearchParams();
+    if (filters?.tag) {
+      params.set("tag", filters.tag);
+    }
+    if (filters?.q) {
+      params.set("q", filters.q);
+    }
+    const qs = params.toString();
+
+    return http<Note[]>(`/notes${qs ? `?${qs}` : ""}`);
+  },
   createNote: (input: { title: string; body: string; tags: string[] }) =>
     http<Note>("/notes", { method: "POST", body: JSON.stringify(input) }),
+  updateNote: (
+    id: string,
+    input: { title: string; body: string; tags: string[] },
+  ) =>
+    http<Note>(`/notes/${id}`, { method: "PUT", body: JSON.stringify(input) }),
   deleteNote: async (id: string): Promise<void> => {
     await http(`/notes/${id}`, { method: "DELETE" });
   },
+
+  createCard: (input: { note_id: string; front: string; back: string }) =>
+    http<Card>("/cards", { method: "POST", body: JSON.stringify(input) }),
 
   queue: () => http<Card[]>("/reviews/queue"),
   grade: async (cardId: string, grade: Grade): Promise<void> => {

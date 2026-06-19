@@ -4,6 +4,8 @@ import { defineConfig, devices } from "@playwright/test";
 // these flows, so the config does not start servers itself.
 const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:5173";
 
+const chromiumExecutable = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH;
+
 export default defineConfig({
   testDir: "./tests",
   fullyParallel: false,
@@ -15,6 +17,14 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    {
+      name: "chromium",
+      use: {
+        ...devices["Desktop Chrome"],
+        ...(chromiumExecutable
+          ? { launchOptions: { executablePath: chromiumExecutable } }
+          : {}),
+      },
+    },
   ],
 });

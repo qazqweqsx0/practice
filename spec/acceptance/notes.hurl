@@ -43,6 +43,20 @@ HTTP 200
 jsonpath "$" isCollection
 jsonpath "$[*].id" contains {{note_id}}
 
+# Filter notes by title substring.
+GET {{base}}/notes?q=Ebbinghaus
+HTTP 200
+[Asserts]
+jsonpath "$" isCollection
+jsonpath "$[*].id" contains {{note_id}}
+
+# Filter notes by tag substring via q.
+GET {{base}}/notes?q=memory
+HTTP 200
+[Asserts]
+jsonpath "$" isCollection
+jsonpath "$[*].id" contains {{note_id}}
+
 # Validation: a note needs a title.
 POST {{base}}/notes
 Content-Type: application/json

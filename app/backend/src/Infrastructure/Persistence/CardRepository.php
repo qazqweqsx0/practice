@@ -46,6 +46,14 @@ final readonly class CardRepository
         return (new Select($this->orm, Card::class))->count();
     }
 
+    public function countDueBetween(Day $from, Day $to): int
+    {
+        return (new Select($this->orm, Card::class))
+            ->where('due', '>=', $from->value)
+            ->where('due', '<=', $to->value)
+            ->count();
+    }
+
     public function save(Card $card): void
     {
         (new EntityManager($this->orm))->persist($card)->run();

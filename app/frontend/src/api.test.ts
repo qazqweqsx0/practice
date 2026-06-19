@@ -22,14 +22,15 @@ describe("api client", () => {
     expect(notes).toEqual([{ id: "1" }]);
   });
 
-  it("кодирует тег в query-параметре", async () => {
+  it("кодирует поисковый запрос в query-параметре", async () => {
     const fetchMock = vi.fn().mockResolvedValue(jsonResponse([]));
     vi.stubGlobal("fetch", fetchMock);
 
-    await api.listNotes("c++ и rust");
+    await api.listNotes({ q: "память" });
 
-    const url = String(fetchMock.mock.calls[0]?.[0]);
-    expect(url).toContain("/notes?tag=c%2B%2B%20%D0%B8%20rust");
+    const url = new URL(String(fetchMock.mock.calls[0]?.[0]));
+    expect(url.pathname).toBe("/notes");
+    expect(url.searchParams.get("q")).toBe("память");
   });
 
   it("на 204 возвращает undefined и не парсит тело", async () => {
@@ -90,5 +91,40 @@ describe("api client", () => {
       "application/json",
     );
     expect(init.method).toBe("POST");
+  });
+
+  it("отправляет PUT при обновлении заметки", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: "1" }, 200));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await api.updateNote("1", { title: "t", body: "b", tags: ["x"] });
+
+    const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/notes/1");
+    expect(init.method).toBe("PUT");
+  });
+
+  it("создаёт карточку из заметки", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse({ id: "c1" }, 201));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await api.createCard({
+      note_id: "n1",
+      front: "Вопрос",
+      back: "Ответ",
+    });
+
+    const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(String(fetchMock.mock.calls[0]?.[0])).toContain("/cards");
+    expect(init.method).toBe("POST");
+    expect(init.body).toBe(
+      JSON.stringify({
+        note_id: "n1",
+        front: "Вопрос",
+        back: "Ответ",
+      }),
+    );
   });
 });
